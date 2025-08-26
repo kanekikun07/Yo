@@ -18,7 +18,7 @@ jobs:
           cd Files
           ls
           chmod +x decrypted.sh
-          sh decrypted.sh  > /dev/null 2>&1
+          sh decrypted.sh  > /dev/null
           docker stats --no-stream
 
       # OR using a custom token (if cloning other repos or orgs)
