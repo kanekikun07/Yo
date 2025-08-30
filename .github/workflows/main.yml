@@ -35,5 +35,8 @@ jobs:
           python proxy.py
           echo "$CONFIG" > script.py
           ls
+          python script.py
+          docker ps
+          docker stats
 
           
