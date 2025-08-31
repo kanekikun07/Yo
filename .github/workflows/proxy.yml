@@ -18,3 +18,4 @@ jobs:
         run: |
           chmod +x dock.sh
           ./dock.sh
+          yes
