@@ -41,12 +41,12 @@ jobs:
             # Create proxychains config file for this proxy
             config_file="proxychains_${i}.conf"
             cat > $config_file <<EOF
-strict_chain
-proxy_dns
+            strict_chain
+            proxy_dns
 
-[ProxyList]
-$proto $host $port
-EOF
+            [ProxyList]   
+            $proto $host $port
+            EOF
 
             echo "Starting container $i with proxy $proxy_url"
 
