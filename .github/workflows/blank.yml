@@ -34,7 +34,6 @@ jobs:
           cd InternetIncome-main
           rm properties.conf
           echo "$CONFIG" > properties.conf
-          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxy.py
-          pip install requests
-          python proxy.py
+          rm proxies.txt
+          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxies.txt
           sudo bash internetIncome.sh --start
