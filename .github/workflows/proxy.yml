@@ -1,40 +1,48 @@
-# This is a basic workflow to help you get started with Actions
+name: Run 100 Proxyrack POP Containers
 
-name: InternetIncome locale proxy
-
-# Controls when the workflow will run
 on:
-  # Allows you t run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  run-pop:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        env: # Or as an environment variable
-          CONFIG: ${{ secrets.CONFIG }}
+      - name: Run 100 containers with unique proxies
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
         run: |
-          wget -O main.zip https://github.com/engageub/InternetIncome/archive/refs/heads/main.zip
-          sudo apt-get install unzip
-          unzip -o main.zip
-          cd InternetIncome-main
-          rm properties.conf
-          echo "$CONFIG" > properties.conf
-          rm proxies.txt
-          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxies.txt
-          sudo bash internetIncome.sh --start
-          yes "hello"
+          # Read proxies into an array
+          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxy.py
+          pip install requests
+          python proxy.py
+          mapfile -t proxies < proxies.txt
+          total=${#proxies[@]}
+
+          if [ $total -lt 100 ]; then
+            echo "Error: Not enough proxies in proxies.txt (found $total, need 100)"
+            exit 1
+          fi
+
+          # Shuffle proxies to randomize assignment
+          shuffled=($(shuf -e "${proxies[@]}"))
+
+          for i in $(seq 1 100); do
+            UUID="86c5f5d55f2317e7e852b1ae02b2e3b5388e18a51f848931508bc892935c8719"
+            DEVICE_NAME="device_$i"
+            PROXY=${shuffled[$((i-1))]}
+
+            echo "Starting container $i with proxy $PROXY"
+
+            docker run -d \
+              -e UUID=$UUID \
+              -e API_KEY=$API_KEY \
+              -e DEVICE_NAME=$DEVICE_NAME \
+              -e PROXY=$PROXY \
+              proxyrack/pop:latest
+          done
