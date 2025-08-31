@@ -18,9 +18,8 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           # Read proxies into an array
-          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxy.py
-          pip install requests
-          python proxy.py
+          wget https://raw.githubusercontent.com/kanekikun07/Yo/refs/heads/main/proxx.txt
+          rm proxies.txt && mv proxx.txt proxies.txt
           mapfile -t proxies < proxies.txt
           total=${#proxies[@]}
 
@@ -43,6 +42,6 @@ jobs:
               -e UUID=$UUID \
               -e API_KEY=$API_KEY \
               -e DEVICE_NAME=$DEVICE_NAME \
-              -e PROXY=$PROXY \
+              -e http_proxy=$PROXY \
               proxyrack/pop:latest
           done
